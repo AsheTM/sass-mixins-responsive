@@ -10,7 +10,17 @@
     "type": "git",
     "url": "git+https://github.com/AsheTM/sass-mixins-responsive.git"
   },
-  "keywords": [],
+  "keywords": [
+    "csss",
+    "sass",
+    "scss",
+    "mixin",
+    "mixins",
+    "responsive",
+    "util",
+    "utilities",
+    "utility"
+  ],
   "author": {
     "email": "contact@ashetm.com", 
     "name": "Haitham DAWOUD", 
