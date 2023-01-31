@@ -1,0 +1,124 @@
+/** Mobile **/
+$breakpoint-mobile: 612px !default;
+/************/
+
+/** Tablet **/
+$breakpoint-tablet: 912px !default;
+/************/
+
+/** Laptop **/
+$breakpoint-laptop: false !default;
+/***********/
+
+///
+/// Add Breakpoint until the specified device-width.
+///
+/// @output
+/// ```css
+///   @media screen and (max-width: <device-width - 0.01>) {
+///      <content>
+///   }
+/// ```
+///
+/// @example
+///   .selector {
+///     @include for-mobile {
+/// 			width: 100%;
+/// 		}
+///   }
+///
+@mixin for-mobile {
+  @include _breakpoint("mobile") {
+    @content;
+  }
+}
+
+@mixin for-tablet {
+  @include _breakpoint("tablet") {
+    @content;
+  }
+}
+
+@mixin for-laptop {
+  @include _breakpoint("laptop") {
+    @content;
+  }
+}
+
+@mixin for-huge-screen {
+  @include _breakpoint("huge-screen") {
+    @content;
+  }
+}
+
+@mixin at-least($device-width, $device: screen) {
+  @media #{$device} and (min-width: $device-width) {
+    @content;
+  }
+}
+
+@mixin between($device-min-width, $device-max-width, $device: screen) {
+  @media #{$device} and (min-width: $device-min-width) and (max-width: $device-max-width) {
+    @content;
+  }
+}
+
+@mixin at-most($device-width, $device: screen) {
+  @media #{$device} and (max-width: $device-width) {
+    @content;
+  }
+}
+
+////////////////////////////
+/// Internal things
+////////////////////////////
+@mixin _breakpoint($point: "default", $device: all) {
+	/** Mobile **/
+	$_breakpoint-mobile-max-width: $breakpoint-mobile;
+	/************/
+
+	/** Tablet **/
+	$_breakpoint-tablet-min-width: $_breakpoint-mobile-max-width + 1px;
+	$_breakpoint-tablet-max-width: $breakpoint-tablet;
+	/************/
+
+	/** Laptop **/
+	$_breakpoint-laptop-min-width: $_breakpoint-tablet-max-width + 1px;
+	$_breakpoint-laptop-max-width: $breakpoint-laptop;
+	/***********/
+
+	/** Huge Screen **/
+	$_breakpoint-huge-screen-min-width: $_breakpoint-laptop-max-width + 1px;
+	/***********/
+
+  @if $point == "mobile" {
+		@include at-most($_breakpoint-mobile-max-width, $device) {
+			@content;
+		}
+  } @else if $point == "tablet" {
+		@include between($_breakpoint-tablet-min-width, $_breakpoint-tablet-max-width, $device) {
+			@content;
+		}
+  } @else if $point == "laptop" {
+		@if $breakpoint-laptop == false {
+			@include at-least($_breakpoint-laptop-min-width, $device) {
+				@content;
+			}
+		} @else {
+			@include between($_breakpoint-laptop-min-width, $_breakpoint-laptop-max-width, $device) {
+				@content;
+			}
+		}
+  } @else if $point == "huge-screen" {
+		@if $breakpoint-laptop == false {
+			@error '\'$breakpoint-laptop\' not initialized yet!';
+		} @else {
+			@include at-least($_breakpoint-laptop-max-width, $device) {
+				@content;
+			}
+		}
+  } @else {
+		@error '\'$point\' can accept only 4 values: mobile, tablet, laptop or huge-screen!';
+  }
+}
+////////////////////////////
