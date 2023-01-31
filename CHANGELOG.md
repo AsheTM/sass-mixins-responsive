@@ -1,4 +1,8 @@
 
+# 1.0.2
+
+- [x] Update README.md
+
 # 1.0.1
 
 - [x] Update README.md
