@@ -10,6 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/AsheTM/sass-mixins-responsive.git"
   },
+  "private": false,
   "keywords": [
     "csss",
     "sass",
