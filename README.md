@@ -136,7 +136,7 @@ Example:
 
 ```scss
 .selector {
-  @include at-least(<$value>) {
+  @include at-least(<$value>, <$device: screen>) {
     width: 100%;
   }
 }
@@ -145,7 +145,7 @@ Example:
 gives in output: 
 
 ```css
-@media all and (min-width: <$value>) {
+@media <$device: screen> and (min-width: <$value>) {
   width: 100%;
 }
 ```
@@ -157,7 +157,7 @@ Example:
 
 ```scss
 .selector {
-  @include between(<$min>, <$max>) {
+  @include between(<$min>, <$max>, <$device: screen>) {
     width: 100%;
   }
 }
@@ -166,7 +166,7 @@ Example:
 gives in output: 
 
 ```css
-@media all and (min-width: <$min>) and (max-width: <$max>) {
+@media <$device: screen> and (min-width: <$min>) and (max-width: <$max>) {
   width: 100%;
 }
 ```
@@ -177,7 +177,7 @@ Example:
 
 ```scss
 .selector {
-  @include at-most(<$value>) {
+  @include at-most(<$value>, <$device: screen>) {
     width: 100%;
   }
 }
@@ -186,7 +186,7 @@ Example:
 gives in output: 
 
 ```css
-@media all and (max-width: <$value>) {
+@media <$device: screen> and (max-width: <$value>) {
   width: 100%;
 }
 ```
