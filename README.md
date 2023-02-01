@@ -1,7 +1,7 @@
 
-# Some responsive utilities Sass mixins for your needs
+# @ashetm/sass-mixins-responsive
 
-Take what you need!
+Some responsive utilities Sass mixins for your needs. Take what you need!
 
 ## Install
 
@@ -57,7 +57,9 @@ gives in output:
 
 ```css
 @media all and (min-width: <$breakpoint-mobile: 612px>) {
-  width: 100%;
+  .selector {
+    width: 100%;
+  }
 }
 ```
 
@@ -77,7 +79,9 @@ gives in output:
 
 ```css
 @media all and (min-width: <$breakpoint-mobile + 1: 613px>) and (max-width: <$breakpoint-tablet: 912px>) {
-  width: 100%;
+  .selector {
+    width: 100%;
+  }
 }
 ```
 
@@ -98,12 +102,16 @@ gives in output:
 ```css
 /* If ``$breakpoint-laptop`` is given */
 @media all and (min-width: <$breakpoint-tablet + 1: 913px>) and (max-width: <$breakpoint-laptop: 912px>) {
-  width: 100%;
+  .selector {
+    width: 100%;
+  }
 }
 
 /* If ``$breakpoint-laptop`` is not given */
 @media all and (min-width: <$breakpoint-tablet + 1: 913px>) {
-  width: 100%;
+  .selector {
+    width: 100%;
+  }
 }
 ```
 
@@ -126,7 +134,9 @@ gives in output:
 ```css
 /* If ``$breakpoint-laptop`` is given */
 @media all and (min-width: <$breakpoint-laptop + 1>) {
-  width: 100%;
+  .selector {
+    width: 100%;
+  }
 }
 ```
 
@@ -146,7 +156,9 @@ gives in output:
 
 ```css
 @media <$device: screen> and (min-width: <$value>) {
-  width: 100%;
+  .selector {
+    width: 100%;
+  }
 }
 ```
 
@@ -167,7 +179,9 @@ gives in output:
 
 ```css
 @media <$device: screen> and (min-width: <$min>) and (max-width: <$max>) {
-  width: 100%;
+  .selector {
+    width: 100%;
+  }
 }
 ```
 
@@ -187,6 +201,8 @@ gives in output:
 
 ```css
 @media <$device: screen> and (max-width: <$value>) {
-  width: 100%;
+  .selector {
+    width: 100%;
+  }
 }
 ```
