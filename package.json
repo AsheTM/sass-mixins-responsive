@@ -12,12 +12,15 @@
   },
   "private": false,
   "keywords": [
-    "csss",
-    "sass",
-    "scss",
+    "css",
+    "media",
+    "mediaqueries",
+    "mediaquery",
     "mixin",
     "mixins",
     "responsive",
+    "sass",
+    "scss",
     "util",
     "utilities",
     "utility"
