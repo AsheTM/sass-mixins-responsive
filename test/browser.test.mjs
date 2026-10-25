@@ -110,22 +110,31 @@ function runInBrowser(page, deviceScaleFactor) {
   return JSON.parse(match[1]);
 }
 
+// Each configuration describes the same 612px / 912px / 1200px breakpoints.
+const CONFIGS = {
+  px: { 'breakpoint-laptop': '1200px' },
+  // At the default 16px font size.
+  em: { 'breakpoint-mobile': '38.25em', 'breakpoint-tablet': '57em', 'breakpoint-laptop': '75em' },
+};
+
 describe('named breakpoints in a real browser', { skip: browser ? false : 'no Chrome / Edge found (set CHROME_PATH)' }, () => {
-  const css = compile(
-    RANGES.map((range) => `html { @include for-${range} { --${range}: 1; } }`).join('\n'),
-    { 'breakpoint-laptop': '1200px' },
-  );
-  const page = buildPage(css);
+  for (const [configName, config] of Object.entries(CONFIGS)) {
+    const css = compile(
+      RANGES.map((range) => `html { @include for-${range} { --${range}: 1; } }`).join('\n'),
+      config,
+    );
+    const page = buildPage(css);
 
-  for (const deviceScaleFactor of DEVICE_SCALE_FACTORS) {
-    test(`every width matches exactly one range (device scale factor ${deviceScaleFactor})`, () => {
-      for (const { width, matched } of runInBrowser(page, deviceScaleFactor)) {
-        assert.equal(matched.length, 1, `width ${width}px matched [${matched.join(', ')}]`);
+    for (const deviceScaleFactor of DEVICE_SCALE_FACTORS) {
+      test(`${configName}: every width matches exactly one range (device scale factor ${deviceScaleFactor})`, () => {
+        for (const { width, matched } of runInBrowser(page, deviceScaleFactor)) {
+          assert.equal(matched.length, 1, `width ${width}px matched [${matched.join(', ')}]`);
 
-        if (Number.isInteger(width)) {
-          assert.deepEqual(matched, [expectedRange(width)], `width ${width}px`);
+          if (Number.isInteger(width)) {
+            assert.deepEqual(matched, [expectedRange(width)], `width ${width}px`);
+          }
         }
-      }
-    });
+      });
+    }
   }
 });
