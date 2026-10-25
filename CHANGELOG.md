@@ -3,6 +3,7 @@
 
 - [x] Fix internal comments leaking into compiled CSS
 - [x] Fix ``for-huge-screen`` overlapping ``for-laptop`` at ``$breakpoint-laptop``
+- [x] Fix fractional viewport widths matching no named breakpoint (ranges now start ``0.02px`` after the previous breakpoint instead of ``1px``)
 - [x] Fix ``main`` entry in package.json and add ``sass`` / ``style`` fields
 - [x] Fix README examples and typos
 
