@@ -1,6 +1,6 @@
 {
   "name": "@ashetm/sass-mixins-responsive",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Some responsive utilities Sass mixins for your needs",
   "main": "index.scss",
   "sass": "index.scss",
