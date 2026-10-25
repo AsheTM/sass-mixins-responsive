@@ -20,8 +20,8 @@ $breakpoint-laptop: false !default;
 /// @example
 ///   .selector {
 ///     @include for-mobile {
-/// 			width: 100%;
-/// 		}
+///       width: 100%;
+///     }
 ///   }
 ///
 @mixin for-mobile {
@@ -76,48 +76,48 @@ $breakpoint-laptop: false !default;
 $_breakpoint-step: 0.02px;
 
 @mixin _breakpoint($point: "default", $device: all) {
-	// Mobile
-	$_breakpoint-mobile-max-width: $breakpoint-mobile;
+  // Mobile
+  $_breakpoint-mobile-max-width: $breakpoint-mobile;
 
-	// Tablet
-	$_breakpoint-tablet-min-width: $_breakpoint-mobile-max-width + $_breakpoint-step;
-	$_breakpoint-tablet-max-width: $breakpoint-tablet;
+  // Tablet
+  $_breakpoint-tablet-min-width: $_breakpoint-mobile-max-width + $_breakpoint-step;
+  $_breakpoint-tablet-max-width: $breakpoint-tablet;
 
-	// Laptop
-	$_breakpoint-laptop-min-width: $_breakpoint-tablet-max-width + $_breakpoint-step;
-	$_breakpoint-laptop-max-width: $breakpoint-laptop;
+  // Laptop
+  $_breakpoint-laptop-min-width: $_breakpoint-tablet-max-width + $_breakpoint-step;
+  $_breakpoint-laptop-max-width: $breakpoint-laptop;
 
-	// Huge Screen
-	$_breakpoint-huge-screen-min-width: $_breakpoint-laptop-max-width + $_breakpoint-step;
+  // Huge Screen
+  $_breakpoint-huge-screen-min-width: $_breakpoint-laptop-max-width + $_breakpoint-step;
 
   @if $point == "mobile" {
-		@include at-most($_breakpoint-mobile-max-width, $device) {
-			@content;
-		}
+    @include at-most($_breakpoint-mobile-max-width, $device) {
+      @content;
+    }
   } @else if $point == "tablet" {
-		@include between($_breakpoint-tablet-min-width, $_breakpoint-tablet-max-width, $device) {
-			@content;
-		}
+    @include between($_breakpoint-tablet-min-width, $_breakpoint-tablet-max-width, $device) {
+      @content;
+    }
   } @else if $point == "laptop" {
-		@if $breakpoint-laptop == false {
-			@include at-least($_breakpoint-laptop-min-width, $device) {
-				@content;
-			}
-		} @else {
-			@include between($_breakpoint-laptop-min-width, $_breakpoint-laptop-max-width, $device) {
-				@content;
-			}
-		}
+    @if $breakpoint-laptop == false {
+      @include at-least($_breakpoint-laptop-min-width, $device) {
+        @content;
+      }
+    } @else {
+      @include between($_breakpoint-laptop-min-width, $_breakpoint-laptop-max-width, $device) {
+        @content;
+      }
+    }
   } @else if $point == "huge-screen" {
-		@if $breakpoint-laptop == false {
-			@error '\'$breakpoint-laptop\' not initialized yet!';
-		} @else {
-			@include at-least($_breakpoint-huge-screen-min-width, $device) {
-				@content;
-			}
-		}
+    @if $breakpoint-laptop == false {
+      @error '\'$breakpoint-laptop\' not initialized yet!';
+    } @else {
+      @include at-least($_breakpoint-huge-screen-min-width, $device) {
+        @content;
+      }
+    }
   } @else {
-		@error '\'$point\' can accept only 4 values: mobile, tablet, laptop or huge-screen!';
+    @error '\'$point\' can accept only 4 values: mobile, tablet, laptop or huge-screen!';
   }
 }
 ////////////////////////////

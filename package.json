@@ -1,16 +1,28 @@
 {
   "name": "@ashetm/sass-mixins-responsive",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Some responsive utilities Sass mixins for your needs",
   "main": "index.scss",
   "sass": "index.scss",
   "style": "index.scss",
+  "files": [
+    "index.scss",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "test": "node --test test/compile.test.mjs",
     "test:browser": "node --test test/browser.test.mjs"
   },
   "devDependencies": {
     "sass": "1.83.0"
+  },
+  "peerDependencies": {
+    "sass": ">=1.23.0"
+  },
+  "peerDependenciesMeta": {
+    "sass": {
+      "optional": true
+    }
   },
   "repository": {
     "type": "git",
