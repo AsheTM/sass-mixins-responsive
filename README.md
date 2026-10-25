@@ -22,18 +22,18 @@ You only need to import ``@ashetm/sass-mixins-responsive``.
 or, if you want to override the breakpoint value(s)
 
 ```scss
-@use '@ashetm/sass-mixins-responsive' as *;
-
-$breakpoint-mobile: 500px;
-$breakpoint-tablet: 800px;
-$breakpoint-laptop: 1000px;
+@use '@ashetm/sass-mixins-responsive' as * with (
+  $breakpoint-mobile: 500px,
+  $breakpoint-tablet: 800px,
+  $breakpoint-laptop: 1000px
+);
 ```
 
 ## Usage
 
 ### Variables
 
-There is 3 variables that can be overriden: 
+There are 3 variables that can be overridden: 
 
 * ``$breakpoint-mobile`` with default value ``612px``
 * ``$breakpoint-tablet`` with default value ``912px``
@@ -56,7 +56,7 @@ Example:
 gives in output: 
 
 ```css
-@media all and (min-width: <$breakpoint-mobile: 612px>) {
+@media all and (max-width: <$breakpoint-mobile: 612px>) {
   .selector {
     width: 100%;
   }
@@ -101,7 +101,7 @@ gives in output:
 
 ```css
 /* If ``$breakpoint-laptop`` is given */
-@media all and (min-width: <$breakpoint-tablet + 1: 913px>) and (max-width: <$breakpoint-laptop: 912px>) {
+@media all and (min-width: <$breakpoint-tablet + 1: 913px>) and (max-width: <$breakpoint-laptop>) {
   .selector {
     width: 100%;
   }
