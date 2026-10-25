@@ -1,4 +1,16 @@
 
+# 2.0.0
+
+See [Migrating from 1.x](README.md#migrating-from-1x).
+
+- [x] **Breaking:** no media type by default (``@media (...)`` instead of ``all and`` / ``screen and``); every mixin accepts an optional ``$device``
+- [x] **Breaking:** breakpoints are validated (``px`` / ``em`` / ``rem`` numbers, same unit, ascending order)
+- [x] **Breaking:** requires Dart Sass ``>=1.23.0``, LibSass / ``node-sass`` no longer supported
+- [x] Support ``em`` and ``rem`` breakpoints
+- [x] Add opt-in ``$media-range-syntax`` (``(612px < width <= 912px)``)
+- [x] ``$breakpoint-laptop`` defaults to ``null`` (``false`` still works)
+- [x] Document every setting and mixin; README rewritten around ``@use``
+
 # 1.0.4
 
 - [x] Add ``LICENSE`` file (ISC)

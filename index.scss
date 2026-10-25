@@ -2,26 +2,41 @@
 @use 'sass:math';
 @use 'sass:meta';
 
-// Mobile
+////////////////////////////
+/// Settings
+////////////////////////////
+
+/// Last width (included) of the mobile range.
+/// @type Number - in px, em or rem
 $breakpoint-mobile: 612px !default;
 
-// Tablet
+/// Last width (included) of the tablet range.
+/// @type Number - in the same unit as `$breakpoint-mobile`
 $breakpoint-tablet: 912px !default;
 
-// Laptop (`null` or `false`: not set, laptop is the last range)
+/// Last width (included) of the laptop range.
+/// `null` or `false`: not set, laptop is the last range and
+/// `for-huge-screen` is not available.
+/// @type Number | Null - in the same unit as `$breakpoint-mobile`
 $breakpoint-laptop: null !default;
 
-// Media Queries Level 4 range syntax, e.g. `(612px < width <= 912px)`.
-// Needs Chrome 104+, Firefox 63+, Safari 16.4+.
+/// Output Media Queries Level 4 range syntax, e.g. `(612px < width <= 912px)`,
+/// instead of `min-width` / `max-width`.
+/// Needs Chrome 104+, Firefox 63+, Safari 16.4+.
+/// @type Bool
 $media-range-syntax: false !default;
 
+////////////////////////////
+/// Named ranges
+////////////////////////////
+
+/// Up to `$breakpoint-mobile` (included).
 ///
-/// Add Breakpoint up to `$breakpoint-mobile` (included).
-///
+/// @param {String} $device [null] - Media type (`screen`, `print`, ...), all if omitted
 /// @output
 /// ```css
 ///   @media (max-width: <$breakpoint-mobile>) {
-///      <content>
+///     <content>
 ///   }
 /// ```
 ///
@@ -38,36 +53,150 @@ $media-range-syntax: false !default;
   }
 }
 
+/// After `$breakpoint-mobile`, up to `$breakpoint-tablet` (included).
+///
+/// @param {String} $device [null] - Media type (`screen`, `print`, ...), all if omitted
+/// @output
+/// ```css
+///   @media (min-width: <$breakpoint-mobile + 0.02px>) and (max-width: <$breakpoint-tablet>) {
+///     <content>
+///   }
+/// ```
+///
+/// @example
+///   .selector {
+///     @include for-tablet {
+///       width: 50%;
+///     }
+///   }
+///
 @mixin for-tablet($device: null) {
   @include _breakpoint("tablet", $device) {
     @content;
   }
 }
 
+/// After `$breakpoint-tablet`, up to `$breakpoint-laptop` (included) when set.
+///
+/// @param {String} $device [null] - Media type (`screen`, `print`, ...), all if omitted
+/// @output
+/// ```css
+///   @media (min-width: <$breakpoint-tablet + 0.02px>) and (max-width: <$breakpoint-laptop>) {
+///     <content>
+///   }
+///   // Without `$breakpoint-laptop`
+///   @media (min-width: <$breakpoint-tablet + 0.02px>) {
+///     <content>
+///   }
+/// ```
+///
+/// @example
+///   .selector {
+///     @include for-laptop {
+///       width: 33%;
+///     }
+///   }
+///
 @mixin for-laptop($device: null) {
   @include _breakpoint("laptop", $device) {
     @content;
   }
 }
 
+/// After `$breakpoint-laptop`. Fails if `$breakpoint-laptop` is not set.
+///
+/// @param {String} $device [null] - Media type (`screen`, `print`, ...), all if omitted
+/// @output
+/// ```css
+///   @media (min-width: <$breakpoint-laptop + 0.02px>) {
+///     <content>
+///   }
+/// ```
+///
+/// @example
+///   .selector {
+///     @include for-huge-screen {
+///       width: 25%;
+///     }
+///   }
+///
 @mixin for-huge-screen($device: null) {
   @include _breakpoint("huge-screen", $device) {
     @content;
   }
 }
 
+////////////////////////////
+/// Generic queries
+////////////////////////////
+
+/// From `$device-width` (included).
+///
+/// @param {Number} $device-width - Minimum width
+/// @param {String} $device [null] - Media type (`screen`, `print`, ...), all if omitted
+/// @output
+/// ```css
+///   @media (min-width: <$device-width>) {
+///     <content>
+///   }
+/// ```
+///
+/// @example
+///   .selector {
+///     @include at-least(400px) {
+///       width: 50%;
+///     }
+///   }
+///
 @mixin at-least($device-width, $device: null) {
   @include _media($device, _query($min: $device-width)) {
     @content;
   }
 }
 
+/// From `$device-min-width` to `$device-max-width` (both included).
+///
+/// @param {Number} $device-min-width - Minimum width
+/// @param {Number} $device-max-width - Maximum width
+/// @param {String} $device [null] - Media type (`screen`, `print`, ...), all if omitted
+/// @output
+/// ```css
+///   @media (min-width: <$device-min-width>) and (max-width: <$device-max-width>) {
+///     <content>
+///   }
+/// ```
+///
+/// @example
+///   .selector {
+///     @include between(400px, 800px) {
+///       width: 50%;
+///     }
+///   }
+///
 @mixin between($device-min-width, $device-max-width, $device: null) {
   @include _media($device, _query($device-min-width, $device-max-width)) {
     @content;
   }
 }
 
+/// Up to `$device-width` (included).
+///
+/// @param {Number} $device-width - Maximum width
+/// @param {String} $device [null] - Media type (`screen`, `print`, ...), all if omitted
+/// @output
+/// ```css
+///   @media (max-width: <$device-width>) {
+///     <content>
+///   }
+/// ```
+///
+/// @example
+///   .selector {
+///     @include at-most(800px) {
+///       width: 100%;
+///     }
+///   }
+///
 @mixin at-most($device-width, $device: null) {
   @include _media($device, _query($max: $device-width)) {
     @content;
