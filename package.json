@@ -6,7 +6,11 @@
   "sass": "index.scss",
   "style": "index.scss",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test test/compile.test.mjs",
+    "test:browser": "node --test test/browser.test.mjs"
+  },
+  "devDependencies": {
+    "sass": "1.83.0"
   },
   "repository": {
     "type": "git",
