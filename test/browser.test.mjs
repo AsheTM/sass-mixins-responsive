@@ -115,6 +115,7 @@ const CONFIGS = {
   px: { 'breakpoint-laptop': '1200px' },
   // At the default 16px font size.
   em: { 'breakpoint-mobile': '38.25em', 'breakpoint-tablet': '57em', 'breakpoint-laptop': '75em' },
+  'range syntax': { 'breakpoint-laptop': '1200px', 'media-range-syntax': 'true' },
 };
 
 describe('named breakpoints in a real browser', { skip: browser ? false : 'no Chrome / Edge found (set CHROME_PATH)' }, () => {
