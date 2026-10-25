@@ -1,3 +1,7 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:meta';
+
 // Mobile
 $breakpoint-mobile: 612px !default;
 
@@ -69,11 +73,45 @@ $breakpoint-laptop: null !default;
 ////////////////////////////
 /// Internal things
 ////////////////////////////
-// Offset between the end of a range and the start of the next one.
-// Whole-pixel widths match the same range as with 1px, while
-// fractional widths (zoom, device pixel ratio) no longer fall
-// between two ranges.
-$_breakpoint-step: 0.02px;
+// Offset between the end of a range and the start of the next one, per
+// unit: 0.02px, or the same at the default 16px font size for em / rem.
+// Whole-pixel widths match the same range as with 1px, while fractional
+// widths (zoom, device pixel ratio) no longer fall between two ranges.
+$_breakpoint-steps: (
+  px: 0.02px,
+  em: 0.00125em,
+  rem: 0.00125rem,
+);
+
+// Start of the range that follows `$breakpoint`.
+@function _after($breakpoint) {
+  @return $breakpoint + map.get($_breakpoint-steps, math.unit($breakpoint));
+}
+
+// Fail early on breakpoints that would produce broken media queries.
+@mixin _check-breakpoints() {
+  $previous: null;
+  $previous-name: null;
+
+  @each $name, $value in (mobile: $breakpoint-mobile, tablet: $breakpoint-tablet, laptop: $breakpoint-laptop) {
+    // The laptop breakpoint is optional.
+    @if $name != laptop or $value {
+      @if meta.type-of($value) != number or not map.has-key($_breakpoint-steps, math.unit($value)) {
+        @error "'$breakpoint-#{$name}' must be a number in px, em or rem, got '#{meta.inspect($value)}'.";
+      }
+      @if $previous {
+        @if math.unit($value) != math.unit($previous) {
+          @error "'$breakpoint-#{$name}' (#{$value}) must use the same unit as '$breakpoint-#{$previous-name}' (#{$previous}).";
+        }
+        @if $value <= $previous {
+          @error "'$breakpoint-#{$name}' (#{$value}) must be greater than '$breakpoint-#{$previous-name}' (#{$previous}).";
+        }
+      }
+      $previous: $value;
+      $previous-name: $name;
+    }
+  }
+}
 
 // Media query with an optional media type (`screen`, `print`, ...).
 // Without one, the query applies to all media types.
@@ -90,22 +128,24 @@ $_breakpoint-step: 0.02px;
 }
 
 @mixin _breakpoint($point, $device: null) {
+  @include _check-breakpoints;
+
   @if $point == "mobile" {
     @include at-most($breakpoint-mobile, $device) {
       @content;
     }
   } @else if $point == "tablet" {
-    @include between($breakpoint-mobile + $_breakpoint-step, $breakpoint-tablet, $device) {
+    @include between(_after($breakpoint-mobile), $breakpoint-tablet, $device) {
       @content;
     }
   } @else if $point == "laptop" {
     // Without a laptop breakpoint, laptop is the last range.
     @if $breakpoint-laptop {
-      @include between($breakpoint-tablet + $_breakpoint-step, $breakpoint-laptop, $device) {
+      @include between(_after($breakpoint-tablet), $breakpoint-laptop, $device) {
         @content;
       }
     } @else {
-      @include at-least($breakpoint-tablet + $_breakpoint-step, $device) {
+      @include at-least(_after($breakpoint-tablet), $device) {
         @content;
       }
     }
@@ -113,7 +153,7 @@ $_breakpoint-step: 0.02px;
     @if not $breakpoint-laptop {
       @error "'$breakpoint-laptop' not initialized yet!";
     }
-    @include at-least($breakpoint-laptop + $_breakpoint-step, $device) {
+    @include at-least(_after($breakpoint-laptop), $device) {
       @content;
     }
   } @else {

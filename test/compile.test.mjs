@@ -83,6 +83,50 @@ describe('named breakpoints', () => {
   });
 });
 
+describe('breakpoint units', () => {
+  const ALL_FOUR = ALL_NAMED + '.d { @include for-huge-screen { color: red; } }';
+
+  test('em breakpoints', () => {
+    const css = compile(ALL_FOUR, {
+      'breakpoint-mobile': '38.25em',
+      'breakpoint-tablet': '57em',
+      'breakpoint-laptop': '75em',
+    });
+
+    assert.deepEqual(mediaQueries(css), [
+      '(max-width: 38.25em)',
+      '(min-width: 38.25125em) and (max-width: 57em)',
+      '(min-width: 57.00125em) and (max-width: 75em)',
+      '(min-width: 75.00125em)',
+    ]);
+  });
+
+  test('rem breakpoints', () => {
+    const css = compile(ALL_NAMED, { 'breakpoint-mobile': '40rem', 'breakpoint-tablet': '60rem' });
+
+    assert.deepEqual(mediaQueries(css), [
+      '(max-width: 40rem)',
+      '(min-width: 40.00125rem) and (max-width: 60rem)',
+      '(min-width: 60.00125rem)',
+    ]);
+  });
+
+  const invalid = [
+    ['unitless', { 'breakpoint-mobile': '600' }, /'\$breakpoint-mobile' must be a number in px, em or rem, got '600'/],
+    ['unsupported unit', { 'breakpoint-tablet': '50%' }, /'\$breakpoint-tablet' must be a number in px, em or rem, got '50%'/],
+    ['not a number', { 'breakpoint-laptop': 'large' }, /'\$breakpoint-laptop' must be a number in px, em or rem, got 'large'/],
+    ['mixed units', { 'breakpoint-tablet': '60em' }, /'\$breakpoint-tablet' \(60em\) must use the same unit as '\$breakpoint-mobile' \(612px\)/],
+    ['not ascending', { 'breakpoint-tablet': '600px' }, /'\$breakpoint-tablet' \(600px\) must be greater than '\$breakpoint-mobile' \(612px\)/],
+    ['laptop not above tablet', { 'breakpoint-laptop': '912px' }, /'\$breakpoint-laptop' \(912px\) must be greater than '\$breakpoint-tablet' \(912px\)/],
+  ];
+
+  for (const [name, config, message] of invalid) {
+    test(`rejects invalid breakpoints: ${name}`, () => {
+      assert.throws(() => compile(ALL_NAMED, config), message);
+    });
+  }
+});
+
 describe('generic mixins', () => {
   test('no media type by default', () => {
     const css = compile(`
