@@ -12,9 +12,9 @@ const ALL_NAMED = `
 describe('named breakpoints', () => {
   test('default breakpoints', () => {
     assert.deepEqual(mediaQueries(compile(ALL_NAMED)), [
-      'all and (max-width: 612px)',
-      'all and (min-width: 612.02px) and (max-width: 912px)',
-      'all and (min-width: 912.02px)',
+      '(max-width: 612px)',
+      '(min-width: 612.02px) and (max-width: 912px)',
+      '(min-width: 912.02px)',
     ]);
   });
 
@@ -26,10 +26,10 @@ describe('named breakpoints', () => {
     });
 
     assert.deepEqual(mediaQueries(css), [
-      'all and (max-width: 500px)',
-      'all and (min-width: 500.02px) and (max-width: 800px)',
-      'all and (min-width: 800.02px) and (max-width: 1200px)',
-      'all and (min-width: 1200.02px)',
+      '(max-width: 500px)',
+      '(min-width: 500.02px) and (max-width: 800px)',
+      '(min-width: 800.02px) and (max-width: 1200px)',
+      '(min-width: 1200.02px)',
     ]);
   });
 
@@ -40,10 +40,26 @@ describe('named breakpoints', () => {
     );
   });
 
+  test('custom media type', () => {
+    const css = compile(`
+      .a { @include for-mobile(screen) { color: red; } }
+      .b { @include for-tablet(screen) { color: red; } }
+      .c { @include for-laptop(screen) { color: red; } }
+      .d { @include for-huge-screen(print) { color: red; } }
+    `, { 'breakpoint-laptop': '1200px' });
+
+    assert.deepEqual(mediaQueries(css), [
+      'screen and (max-width: 612px)',
+      'screen and (min-width: 612.02px) and (max-width: 912px)',
+      'screen and (min-width: 912.02px) and (max-width: 1200px)',
+      'print and (min-width: 1200.02px)',
+    ]);
+  });
+
   test('content is wrapped in the media query', () => {
     const css = compile('.a { @include for-mobile { color: red; } }');
 
-    assert.match(css, /@media all and \(max-width: 612px\) \{\s*\.a \{\s*color: red;\s*\}\s*\}/);
+    assert.match(css, /@media \(max-width: 612px\) \{\s*\.a \{\s*color: red;\s*\}\s*\}/);
   });
 
   test('no comments are emitted', () => {
@@ -56,7 +72,7 @@ describe('named breakpoints', () => {
 });
 
 describe('generic mixins', () => {
-  test('default media type is screen', () => {
+  test('no media type by default', () => {
     const css = compile(`
       .a { @include at-least(400px) { color: red; } }
       .b { @include between(400px, 800px) { color: red; } }
@@ -64,22 +80,22 @@ describe('generic mixins', () => {
     `);
 
     assert.deepEqual(mediaQueries(css), [
-      'screen and (min-width: 400px)',
-      'screen and (min-width: 400px) and (max-width: 800px)',
-      'screen and (max-width: 800px)',
+      '(min-width: 400px)',
+      '(min-width: 400px) and (max-width: 800px)',
+      '(max-width: 800px)',
     ]);
   });
 
   test('custom media type', () => {
     const css = compile(`
       .a { @include at-least(400px, print) { color: red; } }
-      .b { @include between(400px, 800px, all) { color: red; } }
+      .b { @include between(400px, 800px, screen) { color: red; } }
       .c { @include at-most(800px, print) { color: red; } }
     `);
 
     assert.deepEqual(mediaQueries(css), [
       'print and (min-width: 400px)',
-      'all and (min-width: 400px) and (max-width: 800px)',
+      'screen and (min-width: 400px) and (max-width: 800px)',
       'print and (max-width: 800px)',
     ]);
   });
@@ -95,8 +111,8 @@ describe('legacy @import', () => {
     `);
 
     assert.deepEqual(mediaQueries(css), [
-      'all and (max-width: 500px)',
-      'all and (min-width: 500.02px) and (max-width: 912px)',
+      '(max-width: 500px)',
+      '(min-width: 500.02px) and (max-width: 912px)',
     ]);
   });
 });
