@@ -12,7 +12,7 @@ $breakpoint-laptop: false !default;
 ///
 /// @output
 /// ```css
-///   @media all and (max-width: <$breakpoint-mobile>) {
+///   @media (max-width: <$breakpoint-mobile>) {
 ///      <content>
 ///   }
 /// ```
@@ -24,44 +24,44 @@ $breakpoint-laptop: false !default;
 ///     }
 ///   }
 ///
-@mixin for-mobile {
-  @include _breakpoint("mobile") {
+@mixin for-mobile($device: null) {
+  @include _breakpoint("mobile", $device) {
     @content;
   }
 }
 
-@mixin for-tablet {
-  @include _breakpoint("tablet") {
+@mixin for-tablet($device: null) {
+  @include _breakpoint("tablet", $device) {
     @content;
   }
 }
 
-@mixin for-laptop {
-  @include _breakpoint("laptop") {
+@mixin for-laptop($device: null) {
+  @include _breakpoint("laptop", $device) {
     @content;
   }
 }
 
-@mixin for-huge-screen {
-  @include _breakpoint("huge-screen") {
+@mixin for-huge-screen($device: null) {
+  @include _breakpoint("huge-screen", $device) {
     @content;
   }
 }
 
-@mixin at-least($device-width, $device: screen) {
-  @media #{$device} and (min-width: $device-width) {
+@mixin at-least($device-width, $device: null) {
+  @include _media($device, "(min-width: #{$device-width})") {
     @content;
   }
 }
 
-@mixin between($device-min-width, $device-max-width, $device: screen) {
-  @media #{$device} and (min-width: $device-min-width) and (max-width: $device-max-width) {
+@mixin between($device-min-width, $device-max-width, $device: null) {
+  @include _media($device, "(min-width: #{$device-min-width}) and (max-width: #{$device-max-width})") {
     @content;
   }
 }
 
-@mixin at-most($device-width, $device: screen) {
-  @media #{$device} and (max-width: $device-width) {
+@mixin at-most($device-width, $device: null) {
+  @include _media($device, "(max-width: #{$device-width})") {
     @content;
   }
 }
@@ -75,7 +75,21 @@ $breakpoint-laptop: false !default;
 // between two ranges.
 $_breakpoint-step: 0.02px;
 
-@mixin _breakpoint($point: "default", $device: all) {
+// Media query with an optional media type (`screen`, `print`, ...).
+// Without one, the query applies to all media types.
+@mixin _media($device, $query) {
+  @if $device {
+    @media #{$device} and #{$query} {
+      @content;
+    }
+  } @else {
+    @media #{$query} {
+      @content;
+    }
+  }
+}
+
+@mixin _breakpoint($point: "default", $device: null) {
   // Mobile
   $_breakpoint-mobile-max-width: $breakpoint-mobile;
 
