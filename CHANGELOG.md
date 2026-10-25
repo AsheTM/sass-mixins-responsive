@@ -1,4 +1,12 @@
 
+# 1.0.4
+
+- [x] Add ``LICENSE`` file (ISC)
+- [x] Add ``files`` list in package.json so only the library is published
+- [x] Add ``sass >=1.23.0`` as an optional peer dependency
+- [x] Add ``.editorconfig`` and use consistent indentation
+- [x] Add compile tests, browser tests and CI
+
 # 1.0.3
 
 - [x] Fix internal comments leaking into compiled CSS
