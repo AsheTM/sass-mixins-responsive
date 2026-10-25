@@ -157,6 +157,56 @@ describe('generic mixins', () => {
   });
 });
 
+describe('range syntax', () => {
+  const RANGE = { 'media-range-syntax': 'true' };
+
+  test('named mixins', () => {
+    const css = compile(ALL_NAMED + '.d { @include for-huge-screen { color: red; } }', {
+      ...RANGE,
+      'breakpoint-laptop': '1200px',
+    });
+
+    assert.deepEqual(mediaQueries(css), [
+      '(width <= 612px)',
+      '(612px < width <= 912px)',
+      '(912px < width <= 1200px)',
+      '(width > 1200px)',
+    ]);
+  });
+
+  test('laptop is the last range without $breakpoint-laptop', () => {
+    const css = compile('.c { @include for-laptop { color: red; } }', RANGE);
+
+    assert.deepEqual(mediaQueries(css), ['(width > 912px)']);
+  });
+
+  test('generic mixins and media type', () => {
+    const css = compile(`
+      .a { @include at-least(400px) { color: red; } }
+      .b { @include between(400px, 800px) { color: red; } }
+      .c { @include at-most(800px, print) { color: red; } }
+      .d { @include for-tablet(screen) { color: red; } }
+    `, RANGE);
+
+    assert.deepEqual(mediaQueries(css), [
+      '(width >= 400px)',
+      '(400px <= width <= 800px)',
+      'print and (width <= 800px)',
+      'screen and (612px < width <= 912px)',
+    ]);
+  });
+
+  test('em breakpoints are used as is', () => {
+    const css = compile('.b { @include for-tablet { color: red; } }', {
+      ...RANGE,
+      'breakpoint-mobile': '38.25em',
+      'breakpoint-tablet': '57em',
+    });
+
+    assert.deepEqual(mediaQueries(css), ['(38.25em < width <= 57em)']);
+  });
+});
+
 describe('legacy @import', () => {
   test('variables set before @import override the defaults', () => {
     const css = compileRaw(`

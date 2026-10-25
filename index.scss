@@ -11,6 +11,10 @@ $breakpoint-tablet: 912px !default;
 // Laptop (`null` or `false`: not set, laptop is the last range)
 $breakpoint-laptop: null !default;
 
+// Media Queries Level 4 range syntax, e.g. `(612px < width <= 912px)`.
+// Needs Chrome 104+, Firefox 63+, Safari 16.4+.
+$media-range-syntax: false !default;
+
 ///
 /// Add Breakpoint up to `$breakpoint-mobile` (included).
 ///
@@ -53,19 +57,19 @@ $breakpoint-laptop: null !default;
 }
 
 @mixin at-least($device-width, $device: null) {
-  @include _media($device, "(min-width: #{$device-width})") {
+  @include _media($device, _query($min: $device-width)) {
     @content;
   }
 }
 
 @mixin between($device-min-width, $device-max-width, $device: null) {
-  @include _media($device, "(min-width: #{$device-min-width}) and (max-width: #{$device-max-width})") {
+  @include _media($device, _query($device-min-width, $device-max-width)) {
     @content;
   }
 }
 
 @mixin at-most($device-width, $device: null) {
-  @include _media($device, "(max-width: #{$device-width})") {
+  @include _media($device, _query($max: $device-width)) {
     @content;
   }
 }
@@ -113,6 +117,36 @@ $_breakpoint-steps: (
   }
 }
 
+// Width condition between `$min` and `$max` (both optional, `$max` always
+// included). An exclusive `$min` uses `<` with range syntax, otherwise the
+// next width after it.
+@function _query($min: null, $max: null, $min-exclusive: false) {
+  @if $media-range-syntax {
+    $equal: "=";
+    @if $min-exclusive {
+      $equal: "";
+    }
+    @if $min and $max {
+      @return "(#{$min} <#{$equal} width <= #{$max})";
+    }
+    @if $min {
+      @return "(width >#{$equal} #{$min})";
+    }
+    @return "(width <= #{$max})";
+  }
+
+  @if $min and $min-exclusive {
+    $min: _after($min);
+  }
+  @if $min and $max {
+    @return "(min-width: #{$min}) and (max-width: #{$max})";
+  }
+  @if $min {
+    @return "(min-width: #{$min})";
+  }
+  @return "(max-width: #{$max})";
+}
+
 // Media query with an optional media type (`screen`, `print`, ...).
 // Without one, the query applies to all media types.
 @mixin _media($device, $query) {
@@ -130,34 +164,25 @@ $_breakpoint-steps: (
 @mixin _breakpoint($point, $device: null) {
   @include _check-breakpoints;
 
+  $query: null;
   @if $point == "mobile" {
-    @include at-most($breakpoint-mobile, $device) {
-      @content;
-    }
+    $query: _query($max: $breakpoint-mobile);
   } @else if $point == "tablet" {
-    @include between(_after($breakpoint-mobile), $breakpoint-tablet, $device) {
-      @content;
-    }
+    $query: _query($breakpoint-mobile, $breakpoint-tablet, $min-exclusive: true);
   } @else if $point == "laptop" {
     // Without a laptop breakpoint, laptop is the last range.
-    @if $breakpoint-laptop {
-      @include between(_after($breakpoint-tablet), $breakpoint-laptop, $device) {
-        @content;
-      }
-    } @else {
-      @include at-least(_after($breakpoint-tablet), $device) {
-        @content;
-      }
-    }
+    $query: _query($breakpoint-tablet, $breakpoint-laptop, $min-exclusive: true);
   } @else if $point == "huge-screen" {
     @if not $breakpoint-laptop {
       @error "'$breakpoint-laptop' not initialized yet!";
     }
-    @include at-least(_after($breakpoint-laptop), $device) {
-      @content;
-    }
+    $query: _query($breakpoint-laptop, $min-exclusive: true);
   } @else {
     @error "'$point' can accept only 4 values: mobile, tablet, laptop or huge-screen!";
+  }
+
+  @include _media($device, $query) {
+    @content;
   }
 }
 ////////////////////////////
