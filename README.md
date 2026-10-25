@@ -39,6 +39,8 @@ There are 3 variables that can be overridden:
 * ``$breakpoint-tablet`` with default value ``912px``
 * ``$breakpoint-laptop`` with no default value
 
+Each breakpoint is the last width (included) of its range; the next range starts ``0.02px`` after it. This keeps whole-pixel widths in the same range while making sure fractional viewport widths (browser zoom, display scaling at 125% / 150%) always match one range.
+
 ### Mixins
 
 #### for-mobile
@@ -78,7 +80,7 @@ Example:
 gives in output: 
 
 ```css
-@media all and (min-width: <$breakpoint-mobile + 1: 613px>) and (max-width: <$breakpoint-tablet: 912px>) {
+@media all and (min-width: <$breakpoint-mobile + 0.02px: 612.02px>) and (max-width: <$breakpoint-tablet: 912px>) {
   .selector {
     width: 100%;
   }
@@ -101,14 +103,14 @@ gives in output:
 
 ```css
 /* If ``$breakpoint-laptop`` is given */
-@media all and (min-width: <$breakpoint-tablet + 1: 913px>) and (max-width: <$breakpoint-laptop>) {
+@media all and (min-width: <$breakpoint-tablet + 0.02px: 912.02px>) and (max-width: <$breakpoint-laptop>) {
   .selector {
     width: 100%;
   }
 }
 
 /* If ``$breakpoint-laptop`` is not given */
-@media all and (min-width: <$breakpoint-tablet + 1: 913px>) {
+@media all and (min-width: <$breakpoint-tablet + 0.02px: 912.02px>) {
   .selector {
     width: 100%;
   }
@@ -133,7 +135,7 @@ gives in output:
 
 ```css
 /* If ``$breakpoint-laptop`` is given */
-@media all and (min-width: <$breakpoint-laptop + 1>) {
+@media all and (min-width: <$breakpoint-laptop + 0.02px>) {
   .selector {
     width: 100%;
   }

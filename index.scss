@@ -69,20 +69,26 @@ $breakpoint-laptop: false !default;
 ////////////////////////////
 /// Internal things
 ////////////////////////////
+// Offset between the end of a range and the start of the next one.
+// Whole-pixel widths match the same range as with 1px, while
+// fractional widths (zoom, device pixel ratio) no longer fall
+// between two ranges.
+$_breakpoint-step: 0.02px;
+
 @mixin _breakpoint($point: "default", $device: all) {
 	// Mobile
 	$_breakpoint-mobile-max-width: $breakpoint-mobile;
 
 	// Tablet
-	$_breakpoint-tablet-min-width: $_breakpoint-mobile-max-width + 1px;
+	$_breakpoint-tablet-min-width: $_breakpoint-mobile-max-width + $_breakpoint-step;
 	$_breakpoint-tablet-max-width: $breakpoint-tablet;
 
 	// Laptop
-	$_breakpoint-laptop-min-width: $_breakpoint-tablet-max-width + 1px;
+	$_breakpoint-laptop-min-width: $_breakpoint-tablet-max-width + $_breakpoint-step;
 	$_breakpoint-laptop-max-width: $breakpoint-laptop;
 
 	// Huge Screen
-	$_breakpoint-huge-screen-min-width: $_breakpoint-laptop-max-width + 1px;
+	$_breakpoint-huge-screen-min-width: $_breakpoint-laptop-max-width + $_breakpoint-step;
 
   @if $point == "mobile" {
 		@include at-most($_breakpoint-mobile-max-width, $device) {
