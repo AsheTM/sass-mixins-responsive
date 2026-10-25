@@ -33,6 +33,18 @@ describe('named breakpoints', () => {
     ]);
   });
 
+  for (const unset of ['null', 'false']) {
+    test(`$breakpoint-laptop: ${unset} makes laptop the last range`, () => {
+      const css = compile('.c { @include for-laptop { color: red; } }', { 'breakpoint-laptop': unset });
+
+      assert.deepEqual(mediaQueries(css), ['(min-width: 912.02px)']);
+      assert.throws(
+        () => compile('.d { @include for-huge-screen { color: red; } }', { 'breakpoint-laptop': unset }),
+        /'\$breakpoint-laptop' not initialized yet!/,
+      );
+    });
+  }
+
   test('for-huge-screen fails when $breakpoint-laptop is not set', () => {
     assert.throws(
       () => compile('.d { @include for-huge-screen { color: red; } }'),
