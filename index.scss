@@ -4,8 +4,8 @@ $breakpoint-mobile: 612px !default;
 // Tablet
 $breakpoint-tablet: 912px !default;
 
-// Laptop
-$breakpoint-laptop: false !default;
+// Laptop (`null` or `false`: not set, laptop is the last range)
+$breakpoint-laptop: null !default;
 
 ///
 /// Add Breakpoint up to `$breakpoint-mobile` (included).
@@ -89,49 +89,35 @@ $_breakpoint-step: 0.02px;
   }
 }
 
-@mixin _breakpoint($point: "default", $device: null) {
-  // Mobile
-  $_breakpoint-mobile-max-width: $breakpoint-mobile;
-
-  // Tablet
-  $_breakpoint-tablet-min-width: $_breakpoint-mobile-max-width + $_breakpoint-step;
-  $_breakpoint-tablet-max-width: $breakpoint-tablet;
-
-  // Laptop
-  $_breakpoint-laptop-min-width: $_breakpoint-tablet-max-width + $_breakpoint-step;
-  $_breakpoint-laptop-max-width: $breakpoint-laptop;
-
-  // Huge Screen
-  $_breakpoint-huge-screen-min-width: $_breakpoint-laptop-max-width + $_breakpoint-step;
-
+@mixin _breakpoint($point, $device: null) {
   @if $point == "mobile" {
-    @include at-most($_breakpoint-mobile-max-width, $device) {
+    @include at-most($breakpoint-mobile, $device) {
       @content;
     }
   } @else if $point == "tablet" {
-    @include between($_breakpoint-tablet-min-width, $_breakpoint-tablet-max-width, $device) {
+    @include between($breakpoint-mobile + $_breakpoint-step, $breakpoint-tablet, $device) {
       @content;
     }
   } @else if $point == "laptop" {
-    @if $breakpoint-laptop == false {
-      @include at-least($_breakpoint-laptop-min-width, $device) {
+    // Without a laptop breakpoint, laptop is the last range.
+    @if $breakpoint-laptop {
+      @include between($breakpoint-tablet + $_breakpoint-step, $breakpoint-laptop, $device) {
         @content;
       }
     } @else {
-      @include between($_breakpoint-laptop-min-width, $_breakpoint-laptop-max-width, $device) {
+      @include at-least($breakpoint-tablet + $_breakpoint-step, $device) {
         @content;
       }
     }
   } @else if $point == "huge-screen" {
-    @if $breakpoint-laptop == false {
-      @error '\'$breakpoint-laptop\' not initialized yet!';
-    } @else {
-      @include at-least($_breakpoint-huge-screen-min-width, $device) {
-        @content;
-      }
+    @if not $breakpoint-laptop {
+      @error "'$breakpoint-laptop' not initialized yet!";
+    }
+    @include at-least($breakpoint-laptop + $_breakpoint-step, $device) {
+      @content;
     }
   } @else {
-    @error '\'$point\' can accept only 4 values: mobile, tablet, laptop or huge-screen!';
+    @error "'$point' can accept only 4 values: mobile, tablet, laptop or huge-screen!";
   }
 }
 ////////////////////////////
