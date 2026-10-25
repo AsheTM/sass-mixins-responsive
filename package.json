@@ -1,8 +1,10 @@
 {
   "name": "@ashetm/sass-mixins-responsive",
-  "version": "1.0.2",
-  "description": "",
-  "main": "index.js",
+  "version": "1.0.3",
+  "description": "Some responsive utilities Sass mixins for your needs",
+  "main": "index.scss",
+  "sass": "index.scss",
+  "style": "index.scss",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
