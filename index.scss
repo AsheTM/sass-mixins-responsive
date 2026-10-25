@@ -1,21 +1,18 @@
-/** Mobile **/
+// Mobile
 $breakpoint-mobile: 612px !default;
-/************/
 
-/** Tablet **/
+// Tablet
 $breakpoint-tablet: 912px !default;
-/************/
 
-/** Laptop **/
+// Laptop
 $breakpoint-laptop: false !default;
-/***********/
 
 ///
-/// Add Breakpoint until the specified device-width.
+/// Add Breakpoint up to `$breakpoint-mobile` (included).
 ///
 /// @output
 /// ```css
-///   @media screen and (max-width: <device-width - 0.01>) {
+///   @media all and (max-width: <$breakpoint-mobile>) {
 ///      <content>
 ///   }
 /// ```
@@ -72,24 +69,26 @@ $breakpoint-laptop: false !default;
 ////////////////////////////
 /// Internal things
 ////////////////////////////
+// Offset between the end of a range and the start of the next one.
+// Whole-pixel widths match the same range as with 1px, while
+// fractional widths (zoom, device pixel ratio) no longer fall
+// between two ranges.
+$_breakpoint-step: 0.02px;
+
 @mixin _breakpoint($point: "default", $device: all) {
-	/** Mobile **/
+	// Mobile
 	$_breakpoint-mobile-max-width: $breakpoint-mobile;
-	/************/
 
-	/** Tablet **/
-	$_breakpoint-tablet-min-width: $_breakpoint-mobile-max-width + 1px;
+	// Tablet
+	$_breakpoint-tablet-min-width: $_breakpoint-mobile-max-width + $_breakpoint-step;
 	$_breakpoint-tablet-max-width: $breakpoint-tablet;
-	/************/
 
-	/** Laptop **/
-	$_breakpoint-laptop-min-width: $_breakpoint-tablet-max-width + 1px;
+	// Laptop
+	$_breakpoint-laptop-min-width: $_breakpoint-tablet-max-width + $_breakpoint-step;
 	$_breakpoint-laptop-max-width: $breakpoint-laptop;
-	/***********/
 
-	/** Huge Screen **/
-	$_breakpoint-huge-screen-min-width: $_breakpoint-laptop-max-width + 1px;
-	/***********/
+	// Huge Screen
+	$_breakpoint-huge-screen-min-width: $_breakpoint-laptop-max-width + $_breakpoint-step;
 
   @if $point == "mobile" {
 		@include at-most($_breakpoint-mobile-max-width, $device) {
@@ -113,7 +112,7 @@ $breakpoint-laptop: false !default;
 		@if $breakpoint-laptop == false {
 			@error '\'$breakpoint-laptop\' not initialized yet!';
 		} @else {
-			@include at-least($_breakpoint-laptop-max-width, $device) {
+			@include at-least($_breakpoint-huge-screen-min-width, $device) {
 				@content;
 			}
 		}
